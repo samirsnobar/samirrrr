@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كافيه وحلويات M&S | القائمة الفاخرة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-cream: #fcf8f3;
+            --card-white: #ffffff;
+            --choco-dark: #2c1810;
+            --choco-medium: #4a2c20;
+            --caramel: #d97724;
+            --caramel-light: #f3a858;
+            --text-muted: #7f6a60;
+            --border-soft: #efe3d6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--choco-dark);
+            padding-bottom: 95px;
+            overflow-x: hidden;
+        }
+
+        /* --- شاشة البداية والأنيميشن الناعم --- */
+        #intro-screen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #3e2217 0%, #1f100a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: var(--bg-cream);
+            text-align: center;
+            padding: 20px;
+            transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.85s;
+        }
+
+        #intro-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.06);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .intro-icon {
+            width: 85px;
+            height: 85px;
+            background: rgba(217, 119, 36, 0.15);
+            border: 2px solid var(--caramel);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--caramel-light);
+            margin-bottom: 18px;
+            animation: floatLogo 2s ease-in-out infinite, scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .intro-title {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #fff;
+            margin-bottom: 6px;
+            opacity: 0;
+            animation: slideUpFade 0.8s ease 0.2s forwards;
+        }
+
+        .intro-title span {
+            color: var(--caramel-light);
+        }
+
+        .intro-sub {
+            font-size: 1rem;
+            color: #d7c3b5;
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: slideUpFade 0.8s ease 0.4s forwards;
+        }
+
+        .loader-bar {
+            width: 180px;
+            height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            opacity: 0;
+            animation: slideUpFade 0.6s ease 0.5s forwards;
+        }
+
+        .loader-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--caramel), var(--caramel-light));
+            border-radius: 10px;
+            animation: fillProgress 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideUpFade {
+            from { transform: translateY(18px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fillProgress {
+            to { width: 100%; }
+        }
+
+        /* --- الهيدر وتصنيفات القائمة --- */
+        header {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-soft);
+            padding: 14px 16px 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(44, 24, 16, 0.05);
+        }
+
+        .brand-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 900px;
+            margin: 0 auto 12px;
+        }
+
+        .brand-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-badge {
+            background: var(--choco-dark);
+            color: var(--caramel-light);
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+        }
+
+        .brand-name h1 {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--choco-dark);
+        }
+
+        .header-tools {
+            display: flex;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            background: var(--bg-cream);
+            border: 1px solid var(--border-soft);
+            color: var(--choco-medium);
+            padding: 6px 11px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .icon-btn:hover {
+            background: var(--caramel);
+            color: #fff;
+            border-color: var(--caramel);
+        }
+
+        /* شريط الأقسام السريع */
+        .categories-scroll {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            max-width: 900px;
+            margin: 0 auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .categories-scroll::-webkit-scrollbar { display: none; }
+
+        .cat-pill {
+            background: var(--bg-cream);
+            color: var(--choco-medium);
+            border: 1px solid var(--border-soft);
+            padding: 7px 16px;
+            border-radius: 25px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .cat-pill.active, .cat-pill:hover {
+            background: var(--caramel);
+            color: #fff;
+            border-color: var(--caramel);
+            box-shadow: 0 4px 12px rgba(217, 119, 36, 0.3);
+        }
+
+        /* --- حاوية القائمة الأنيقة والسريعة --- */
+        .menu-container {
+            max-width: 900px;
+            margin: 18px auto;
+            padding: 0 14px;
+        }
+
+        .menu-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 700px) {
+            .menu-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+
+        /* بطاقة الصنف الأفقية السريعة */
+        .item-card {
+            background: var(--card-white);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 14px rgba(44, 24, 16, 0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: cardAppear 0.4s ease backwards;
+        }
+
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(217, 119, 36, 0.12);
+            border-color: var(--caramel-light);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .item-thumb {
+            width: 82px;
+            height: 82px;
+            border-radius: 14px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #f3e9df;
+        }
+
+        .item-details {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .item-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--choco-dark);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .item-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-price {
+            font-weight: 900;
+            font-size: 0.95rem;
+            color: var(--caramel);
+        }
+
+        /* أزرار التحكم بالكمية */
+        .qty-box {
+            display: flex;
+            align-items: center;
+            background: var(--bg-cream);
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            padding: 2px;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 8px;
+            background: var(--choco-dark);
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .qty-btn.plus {
+            background: var(--caramel);
+        }
+        .qty-btn:active { transform: scale(0.9); }
+
+        .qty-num {
+            font-weight: 800;
+            font-size: 0.9rem;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        /* --- شريط السلة السفلي --- */
+        #cart-bar {
+            position: fixed;
+            bottom: 14px;
+            left: 50%;
+            transform: translate(-50%, 130%);
+            width: calc(100% - 28px);
+            max-width: 870px;
+            background: var(--choco-dark);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(44, 24, 16, 0.35);
+            z-index: 500;
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #cart-bar.active {
+            transform: translate(-50%, 0);
+        }
+
+        .cart-summary {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .cart-summary span {
+            color: var(--caramel-light);
+            font-weight: 900;
+        }
+
+        .cart-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-cart-view {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-wa {
+            background: #25d366;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- النوافذ المنبثقة --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(28, 15, 10, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 14px;
+        }
+
+        .modal-card {
+            background: var(--card-white);
+            width: 100%;
+            max-width: 520px;
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .modal-card h2 {
+            font-size: 1.2rem;
+            color: var(--choco-dark);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: var(--bg-cream);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: var(--choco-dark);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .scroll-area {
+            overflow-y: auto;
+            max-height: 55vh;
+            padding-left: 4px;
+        }
+
+        .cart-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--bg-cream);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        /* عناصر الإدارة */
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: var(--bg-cream);
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: var(--choco-dark);
+            color: #fff;
+        }
+
+        .admin-card-edit {
+            background: var(--bg-cream);
+            border: 1px solid var(--border-soft);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .admin-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .admin-card-edit input, .admin-card-edit select, .admin-card-edit textarea,
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #dccab8;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            background: #fff;
+            color: var(--choco-dark);
+        }
+
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 3px; }
+
+        .btn-save { background: #27ae60; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .btn-del { background: #e74c3c; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .btn-primary { background: var(--caramel); color: #fff; border: none; padding: 11px; width: 100%; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. شاشة البداية والأنيميشن الناعم -->
+    <div id="intro-screen" onclick="skipIntro()">
+        <div class="intro-icon"><i class="fa-solid fa-mug-hot"></i></div>
+        <div class="intro-title">كافيه وحلويات <span>M&S</span></div>
+        <div class="intro-sub">لحظات دافئة ومذاق يذوب في الفم</div>
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <!-- 2. الهيدر وتصنيفات القائمة -->
+    <header>
+        <div class="brand-bar">
+            <div class="brand-name">
+                <span class="brand-badge">M&S</span>
+                <h1>كافيه وحلويات M&S</h1>
+            </div>
+            <div class="header-tools">
+                <button class="icon-btn" onclick="seedCafeMenu()" title="تعبئة أصناف تجريبية">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> تعبئة
+                </button>
+                <button class="icon-btn" onclick="openAdmin()">
+                    <i class="fa-solid fa-sliders"></i> الإدارة
+                </button>
+            </div>
+        </div>
+
+        <div class="categories-scroll">
+            <button class="cat-pill active" onclick="filterItems('all', this)">الكل</button>
+            <button class="cat-pill" onclick="filterItems('قهوة ساخنة', this)">قهوة ساخنة</button>
+            <button class="cat-pill" onclick="filterItems('مشروبات باردة', this)">مشروبات باردة</button>
+            <button class="cat-pill" onclick="filterItems('حلويات وكيك', this)">حلويات وكيك</button>
+            <button class="cat-pill" onclick="filterItems('وافل وكريب', this)">وافل وكريب</button>
+        </div>
+    </header>
+
+    <!-- 3. قائمة الأصناف السريعة -->
+    <main class="menu-container">
+        <div class="menu-list" id="menuList"></div>
+    </main>
+
+    <!-- 4. شريط السلة السفلي -->
+    <div id="cart-bar">
+        <div class="cart-summary">
+            الطلبات: <span id="cartCount">0</span> | المجموع: <span id="cartTotal">0</span> ل.س
+        </div>
+        <div class="cart-btns">
+            <button class="btn-cart-view" onclick="openCart()">عرض السلة</button>
+            <button class="btn-wa" onclick="sendWhatsApp()">
+                <i class="fa-brands fa-whatsapp fa-lg"></i> اطلب الآن
+            </button>
+        </div>
+    </div>
+
+    <!-- 5. نافذة السلة -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-card">
+            <button class="close-btn" onclick="closeModal('cart-modal')"><i class="fa-solid fa-xmark"></i></button>
+            <h2><i class="fa-solid fa-bag-shopping" style="color:var(--caramel)"></i> سلة طلباتك</h2>
+            <div class="scroll-area" id="cartItemsContainer"></div>
+            <div style="display:flex; justify-content:space-between; font-weight:900; padding:12px 0; border-top:1px solid var(--border-soft); margin-top:8px;">
+                <span>الإجمالي النهائي:</span>
+                <span id="modalTotal" style="color:var(--caramel)">0 ل.س</span>
+            </div>
+            <button class="btn-wa" style="width:100%; justify-content:center; padding:12px; font-size:1rem;" onclick="sendWhatsApp()">
+                <i class="fa-brands fa-whatsapp fa-xl"></i> إرسال الطلب عبر واتساب
+            </button>
+        </div>
+    </div>
+
+    <!-- 6. نافذة الإدارة -->
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal-card">
+            <button class="close-btn" onclick="closeModal('admin-modal')"><i class="fa-solid fa-xmark"></i></button>
+            <h2>إدارة منيو M&S</h2>
+            <div class="admin-tabs">
+                <button class="tab-btn active" id="btnTabEdit" onclick="switchTab('edit')">تعديل الأصناف</button>
+                <button class="tab-btn" id="btnTabAdd" onclick="switchTab('add')">+ إضافة صنف جديد</button>
+            </div>
+
+            <div id="sectionEdit" class="scroll-area"></div>
+
+            <form id="sectionAdd" style="display:none;" onsubmit="addItem(event)">
+                <div class="form-group">
+                    <label>اسم الصنف</label>
+                    <input type="text" id="newName" required placeholder="مثال: سبانش لاتيه مثلج">
+                </div>
+                <div class="form-group">
+                    <label>القسم</label>
+                    <select id="newCat">
+                        <option value="قهوة ساخنة">قهوة ساخنة</option>
+                        <option value="مشروبات باردة">مشروبات باردة</option>
+                        <option value="حلويات وكيك">حلويات وكيك</option>
+                        <option value="وافل وكريب">وافل وكريب</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>السعر (ل.س)</label>
+                    <input type="number" id="newPrice" required placeholder="18000">
+                </div>
+                <div class="form-group">
+                    <label>رابط الصورة</label>
+                    <input type="url" id="newImg" required placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea id="newDesc" rows="2" placeholder="وصف شهي ومختصر..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">حفظ في القائمة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ربط Firebase مع التحديث اللحظي التلقائي ومفاتيحك الخاصة -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEX8aka_yJvpPYJiZ9E80j386tpC8zkAw",
+            authDomain: "samir3-fa980.firebaseapp.com",
+            projectId: "samir3-fa980",
+            storageBucket: "samir3-fa980.firebasestorage.app",
+            messagingSenderId: "1036140331284",
+            appId: "1:1036140331284:web:42c9788c3f52955d3dc201",
+            measurementId: "G-WL2K7Y8TRE"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const menuCol = collection(db, "menu_ms");
+
+        let items = [];
+        let activeCat = 'all';
+        let cart = {};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                skipIntro();
+            }, 2000);
+        });
+
+        window.skipIntro = function() {
+            const intro = document.getElementById('intro-screen');
+            if (intro && !intro.classList.contains('fade-out')) {
+                intro.classList.add('fade-out');
+            }
+        };
+
+        // التحديث الفوري اللحظي عند جميع المستخدمين تلقائياً
+        onSnapshot(menuCol, (snapshot) => {
+            items = [];
+            snapshot.forEach((docSnap) => {
+                items.push({ id: docSnap.id, ...docSnap.data() });
+            });
+            renderMenu();
+            renderAdminList();
+            updateCartUI();
+        });
+
+        window.seedCafeMenu = async function() {
+            const sampleItems = [
+                { name: "سبانش لاتيه ساخن", category: "قهوة ساخنة", price: "16000", image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400", desc: "إسبريسو غني مع الحليب المبخر ولمسة حليب مكثف محلى" },
+                { name: "آيس موكا كراميل", category: "مشروبات باردة", price: "20000", image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400", desc: "قهوة مثلجة مع صوص الشوكولاتة والكراميل والكريمة" },
+                { name: "تشيز كيك اللوتس", category: "حلويات وكيك", price: "24000", image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400", desc: "طبقة بسكويت مقرمشة مع كريمة الجبن الغنية وزبدة اللوتس" },
+                { name: "وافل نوتيلا وفراولة", category: "وافل وكريب", price: "26000", image: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", desc: "وافل بلجيكي طازج مغطى بشوكولاتة النوتيلا وقطع الفراولة" }
+            ];
+
+            for (const item of sampleItems) {
+                await addDoc(menuCol, item);
+            }
+            alert("تمت إضافة الأصناف التجريبية بنجاح لقاعدة البيانات!");
+        };
+
+        function renderMenu() {
+            const container = document.getElementById('menuList');
+            container.innerHTML = '';
+
+            const filtered = activeCat === 'all' ? items : items.filter(i => i.category === activeCat);
+
+            filtered.forEach((item, index) => {
+                const qty = cart[item.id] || 0;
+                const el = document.createElement('div');
+                el.className = 'item-card';
+                el.style.animationDelay = `${index * 0.04}s`;
+                el.innerHTML = `
+                    <img class="item-thumb" src="${item.image || 'https://via.placeholder.com/150'}" alt="${item.name}">
+                    <div class="item-details">
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-desc">${item.desc || ''}</div>
+                        <div class="item-bottom">
+                            <span class="item-price">${Number(item.price).toLocaleString()} ل.س</span>
+                            <div class="qty-box">
+                                <button class="qty-btn plus" onclick="changeQty('${item.id}', 1)">+</button>
+                                <span class="qty-num">${qty}</span>
+                                <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        window.filterItems = function(cat, btn) {
+            activeCat = cat;
+            document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMenu();
+        };
+
+        window.changeQty = function(id, delta) {
+            cart[id] = (cart[id] || 0) + delta;
+            if (cart[id] <= 0) delete cart[id];
+            renderMenu();
+            updateCartUI();
+        };
+
+        function updateCartUI() {
+            let count = 0, total = 0;
+            for (const id in cart) {
+                const item = items.find(i => i.id === id);
+                if (item) {
+                    count += cart[id];
+                    total += cart[id] * Number(item.price);
+                }
+            }
+            document.getElementById('cartCount').innerText = count;
+            document.getElementById('cartTotal').innerText = total.toLocaleString();
+            document.getElementById('modalTotal').innerText = total.toLocaleString() + ' ل.س';
+
+            const bar = document.getElementById('cart-bar');
+            count > 0 ? bar.classList.add('active') : bar.classList.remove('active');
+        }
+
+        window.openCart = function() {
+            const list = document.getElementById('cartItemsContainer');
+            list.innerHTML = '';
+            for (const id in cart) {
+                const item = items.find(i => i.id === id);
+                if (item) {
+                    list.innerHTML += `
+                        <div class="cart-row">
+                            <div>
+                                <strong>${item.name}</strong>
+                                <div style="font-size:0.8rem; color:var(--caramel)">${Number(item.price).toLocaleString()} ل.س × ${cart[id]}</div>
+                            </div>
+                            <button class="btn-del" onclick="changeQty('${id}', -${cart[id]}); openCart();">حذف</button>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('cart-modal').style.display = 'flex';
+        };
+
+        window.closeModal = function(id) {
+            document.getElementById(id).style.display = 'none';
+        };
+
+        window.sendWhatsApp = function() {
+            let text = "مرحباً كافيه وحلويات M&S، أود طلب:\n\n";
+            let total = 0;
+            for (const id in cart) {
+                const item = items.find(i => i.id === id);
+                if (item) {
+                    const sub = cart[id] * Number(item.price);
+                    total += sub;
+                    text += `• ${item.name} (×${cart[id]}) = ${sub.toLocaleString()} ل.س\n`;
+                }
+            }
+            text += `\nالإجمالي: ${total.toLocaleString()} ل.س`;
+            const phone = "963900000000";
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+        };
+
+        window.openAdmin = function() {
+            const pass = prompt("أدخل رمز الإدارة:");
+            if (pass === "1234") {
+                document.getElementById('admin-modal').style.display = 'flex';
+            } else if (pass !== null) {
+                alert("الرمز غير صحيح!");
+            }
+        };
+
+        window.switchTab = function(tab) {
+            document.getElementById('sectionEdit').style.display = tab === 'edit' ? 'block' : 'none';
+            document.getElementById('sectionAdd').style.display = tab === 'add' ? 'block' : 'none';
+            document.getElementById('btnTabEdit').classList.toggle('active', tab === 'edit');
+            document.getElementById('btnTabAdd').classList.toggle('active', tab === 'add');
+        };
+
+        function renderAdminList() {
+            const box = document.getElementById('sectionEdit');
+            box.innerHTML = '';
+            items.forEach(item => {
+                box.innerHTML += `
+                    <div class="admin-card-edit">
+                        <div class="admin-row">
+                            <input type="text" id="n-${item.id}" value="${item.name}" placeholder="الاسم">
+                            <select id="c-${item.id}">
+                                <option value="قهوة ساخنة" ${item.category==='قهوة ساخنة'?'selected':''}>قهوة ساخنة</option>
+                                <option value="مشروبات باردة" ${item.category==='مشروبات باردة'?'selected':''}>مشروبات باردة</option>
+                                <option value="حلويات وكيك" ${item.category==='حلويات وكيك'?'selected':''}>حلويات وكيك</option>
+                                <option value="وافل وكريب" ${item.category==='وافل وكريب'?'selected':''}>وافل وكريب</option>
+                            </select>
+                            <input type="number" id="p-${item.id}" value="${item.price}" placeholder="السعر">
+                        </div>
+                        <input type="text" id="i-${item.id}" value="${item.image || ''}" placeholder="رابط الصورة">
+                        <input type="text" id="d-${item.id}" value="${item.desc || ''}" placeholder="الوصف">
+                        <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:4px;">
+                            <button class="btn-save" onclick="updateItem('${item.id}')">حفظ التعديل</button>
+                            <button class="btn-del" onclick="removeItem('${item.id}')">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        window.updateItem = async function(id) {
+            await updateDoc(doc(db, "menu_ms", id), {
+                name: document.getElementById(`n-${id}`).value,
+                category: document.getElementById(`c-${id}`).value,
+                price: document.getElementById(`p-${id}`).value,
+                image: document.getElementById(`i-${id}`).value,
+                desc: document.getElementById(`d-${id}`).value
+            });
+            alert("تم التحديث بنجاح وعرضه مباشرة عند الجميع!");
+        };
+
+        window.removeItem = async function(id) {
+            if (confirm("حذف هذا الصنف نهائياً من القائمة؟")) {
+                await deleteDoc(doc(db, "menu_ms", id));
+            }
+        };
+
+        window.addItem = async function(e) {
+            e.preventDefault();
+            await addDoc(menuCol, {
+                name: document.getElementById('newName').value,
+                category: document.getElementById('newCat').value,
+                price: document.getElementById('newPrice').value,
+                image: document.getElementById('newImg').value,
+                desc: document.getElementById('newDesc').value
+            });
+            e.target.reset();
+            switchTab('edit');
+            alert("تمت إضافة الصنف بنجاح!");
+        };
+    </script>
+</body>
+</html>
